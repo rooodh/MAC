@@ -1,0 +1,434 @@
+import SwiftUI
+import AppKit
+
+struct ContentView: View {
+    @State private var isHibernating = false
+    @State private var showAlert = false
+    @State private var alertMessage = ""
+    @State private var isTestMode = true
+    @State private var currentSleepMode = "Unknown"
+    @State private var logMessages: [LogMessage] = []
+    @State private var selectedLogFilter = "All"
+    @State private var showingLogPanel = false
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            Text("Hibernate Manager")
+                .font(.title)
+                .fontWeight(.bold)
+            
+            Text("Control your Mac's hibernation mode")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+            
+            // Display current sleep mode with icon
+            HStack {
+                Image(systemName: isHibernating ? "moon.zzz.fill" : "moon.zzz")
+                Text("Current Mode: \(currentSleepMode)")
+            }
+            .font(.headline)
+            .padding(.bottom, 5)
+            
+            // Log button
+            Button(action: {
+                showingLogPanel = true
+            }) {
+                HStack {
+                    Image(systemName: "doc.text.magnifyingglass")
+                    Text("Show Logs")
+                }
+                .padding(8)
+                .background(Color.gray.opacity(0.2))
+                .cornerRadius(8)
+            }
+            
+            Divider()
+            
+            Toggle("Test Mode (Safe)", isOn: $isTestMode)
+                .padding(.horizontal)
+                .toggleStyle(.switch)
+            
+            Text(isTestMode ? "🔒 Safe Mode: No system changes" : "⚠️ Real Mode: Will change system settings")
+                .font(.caption)
+                .foregroundColor(isTestMode ? .green : .orange)
+                .padding(.bottom, 10)
+            
+            // Toggle button for Hibernate enable/disable
+            Button(action: {
+                if isHibernating {
+                    disableHibernation()
+                } else {
+                    enableHibernation()
+                }
+            }) {
+                HStack {
+                    Image(systemName: isHibernating ? "power" : "power")
+                        .font(.title2)
+                    Text(isHibernating ? "Disable Hibernate" : "Enable Hibernate")
+                        .font(.headline)
+                }
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(isHibernating ? Color.red : Color.blue)
+                .foregroundColor(.white)
+                .cornerRadius(10)
+            }
+            .padding(.horizontal)
+            .overlay(
+                // Show success checkmark overlay briefly
+                Group {
+                    if let lastLog = logMessages.last,
+                       (lastLog.message.contains("enabled successfully") || lastLog.message.contains("disabled successfully")) &&
+                       lastLog.type == .success {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.title)
+                            .foregroundColor(.green)
+                            .transition(.opacity)
+                            .animation(.easeInOut(duration: 0.5), value: logMessages.count)
+                    }
+                },
+                alignment: .topTrailing
+            )
+            
+            Button(action: {
+                putToSleep()
+            }) {
+                HStack {
+                    Image(systemName: "moon.zzz")
+                    Text("Put to Sleep Now")
+                }
+                .padding()
+                .background(Color.green)
+                .foregroundColor(.white)
+                .cornerRadius(10)
+            }
+            
+            Spacer()
+        }
+        .padding()
+        .frame(width: 250, height: 350)
+        .alert(isPresented: $showAlert) {
+            Alert(
+                title: Text("Action Required"),
+                message: Text(alertMessage),
+                primaryButton: .default(Text("Show Instructions")) {
+                    // Extract the sudo command from the alert message
+                    if let range = alertMessage.range(of: "sudo ") {
+                        let command = String(alertMessage[range.lowerBound...])
+                        showCommandInstructions(command)
+                    }
+                },
+                secondaryButton: .cancel(Text("OK"))
+            )
+        }
+        .sheet(isPresented: $showCommandSheet) {
+            CommandInstructionsView(
+                command: commandToDisplay,
+                onCopy: {
+                    let pasteboard = NSPasteboard.general
+                    pasteboard.clearContents()
+                    pasteboard.setString(commandToDisplay, forType: .string)
+                    addLogMessage("📋 Command copied to clipboard: \(commandToDisplay)", type: .success)
+                },
+                onOpenTerminal: {
+                    // Try to open Terminal (may fail due to sandboxing, but worth trying)
+                    NSWorkspace.shared.open(URL(fileURLWithPath: "/Applications/Utilities/Terminal.app"))
+                    addLogMessage("🖥️ Terminal opened (paste command manually)", type: .info)
+                },
+                onDismiss: {
+                    showCommandSheet = false
+                }
+            )
+            .frame(width: 500, height: 300)
+        }
+        .onAppear {
+            checkCurrentSleepMode()
+            addLogMessage("Application started", type: .info)
+        }
+        .sheet(isPresented: $showingLogPanel) {
+            LogPanelView(
+                logMessages: $logMessages,
+                selectedFilter: $selectedLogFilter,
+                onClear: clearLogs,
+                onClose: { showingLogPanel = false }
+            )
+            .frame(width: 500, height: 400)
+        }
+    }
+    
+    func enableHibernation() {
+        if isTestMode {
+            // Test mode - simulate the action
+            addLogMessage("TEST MODE: Would execute - sudo pmset -a hibernatemode 25", type: .command)
+            addLogMessage("TEST MODE: Would execute - sudo pmset -a standby 0", type: .command)
+            addLogMessage("TEST MODE: Would execute - sudo pmset -a autopoweroff 0", type: .command)
+            
+            // Update state in test mode
+            isHibernating = true
+            currentSleepMode = "Deep Hibernate (Disk only, no RAM)"
+            addLogMessage("Hibernation enabled (Test Mode)", type: .success)
+        } else {
+            // Real mode - execute actual commands
+            // Use our improved sudo command helper
+            let success = executeSudoCommand("pmset -a hibernatemode 25", successMessage: "Hibernation mode set to 25 (Deep Hibernate)")
+            
+            if success {
+                // Also execute additional commands for full hibernation setup
+                let success2 = executeSudoCommand("pmset -a standby 0", successMessage: "Standby mode disabled")
+                let success3 = executeSudoCommand("pmset -a autopoweroff 0", successMessage: "Auto power off disabled")
+                
+                if success2 && success3 {
+                    // Update state after successful execution
+                    isHibernating = true
+                    currentSleepMode = "Deep Hibernate (Disk only, no RAM)"
+                } else {
+                    addLogMessage("⚠️ Partial success - some hibernation settings may not be applied", type: .warning)
+                    isHibernating = true
+                    currentSleepMode = "Hibernate (Partial)"
+                }
+            } else {
+                alertMessage = "Failed to enable hibernation. Check logs for details."
+                showAlert = true
+            }
+        }
+    }
+    
+    func disableHibernation() {
+        if isTestMode {
+            // Test mode - simulate the action
+            addLogMessage("TEST MODE: Would execute - sudo pmset -a hibernatemode 0", type: .command)
+            addLogMessage("TEST MODE: Would execute - sudo pmset -a standby 1", type: .command)
+            addLogMessage("TEST MODE: Would execute - sudo pmset -a autopoweroff 1", type: .command)
+            
+            // Update state in test mode
+            isHibernating = false
+            currentSleepMode = "Normal Sleep (RAM only)"
+        } else {
+            // Real mode - execute actual commands
+            // Use our improved sudo command helper
+            let success = executeSudoCommand("pmset -a hibernatemode 0", successMessage: "Hibernation mode set to 0 (Normal Sleep)")
+            
+            if success {
+                // Also execute additional commands for full normal sleep setup
+                let success2 = executeSudoCommand("pmset -a standby 1", successMessage: "Standby mode enabled")
+                let success3 = executeSudoCommand("pmset -a autopoweroff 1", successMessage: "Auto power off enabled")
+                
+                if success2 && success3 {
+                    // Update state after successful execution
+                    isHibernating = false
+                    currentSleepMode = "Normal Sleep (RAM only)"
+                } else {
+                    addLogMessage("⚠️ Partial success - some sleep settings may not be applied", type: .warning)
+                    isHibernating = false
+                    currentSleepMode = "Normal Sleep (Partial)"
+                }
+            } else {
+                alertMessage = "Failed to disable hibernation. Check logs for details."
+                showAlert = true
+            }
+        }
+    }
+    
+    func putToSleep() {
+        if isTestMode {
+            // Test mode - simulate the action
+            addLogMessage("TEST MODE: Would execute - pmset sleepnow", type: .command)
+        } else {
+            // Real mode - execute actual command
+            // Command to put the Mac to sleep
+            let task = Process()
+            task.launchPath = "/bin/bash"
+            task.arguments = ["-c", "pmset sleepnow"]
+            
+            let pipe = Pipe()
+            task.standardOutput = pipe
+            task.standardError = pipe
+            
+            do {
+                try task.run()
+                task.waitUntilExit()
+                
+                let data = pipe.fileHandleForReading.readDataToEndOfFile()
+                if let output = String(data: data, encoding: .utf8) {
+                    addLogMessage("Sleep output: \(output)", type: .info)
+                }
+            } catch {
+                addLogMessage("Error putting to sleep: \(error)", type: .error)
+                alertMessage = "Error: \(error.localizedDescription)"
+                showAlert = true
+            }
+        }
+    }
+    
+    func checkCurrentSleepMode() {
+        let task = Process()
+        task.launchPath = "/bin/bash"
+        task.arguments = ["-c", "pmset -g | grep hibernatemode"]
+        
+        let pipe = Pipe()
+        task.standardOutput = pipe
+        task.standardError = pipe
+        
+        do {
+            try task.run()
+            task.waitUntilExit()
+            
+            let data = pipe.fileHandleForReading.readDataToEndOfFile()
+            if let output = String(data: data, encoding: .utf8) {
+                addLogMessage("Current sleep mode output: \(output)", type: .info)
+                
+                // Parse the output to get the hibernatemode value
+                let pattern = "hibernatemode\\s+(\\d+)"
+                guard let regex = try? NSRegularExpression(pattern: pattern) else {
+                    currentSleepMode = "Error parsing mode"
+                    return
+                }
+                
+                let matches = regex.matches(in: output, range: NSRange(output.startIndex..., in: output))
+                if let match = matches.first {
+                    let range = match.range(at: 1)
+                    if let substringRange = Range(range, in: output) {
+                        let modeString = String(output[substringRange])
+                        if let mode = Int(modeString) {
+                            updateSleepModeDescription(mode: mode)
+                        }
+                    }
+                }
+            }
+        } catch {
+            addLogMessage("Error checking sleep mode: \(error)", type: .error)
+            currentSleepMode = "Error: \(error.localizedDescription)"
+        }
+    }
+    
+    func updateSleepModeDescription(mode: Int) {
+        switch mode {
+        case 0:
+            currentSleepMode = "Normal Sleep (RAM only)"
+            isHibernating = false
+        case 1, 5, 7:
+            currentSleepMode = "Safe Sleep (RAM + Disk)"
+            isHibernating = false
+        case 3:
+            currentSleepMode = "Hibernate (Disk only)"
+            isHibernating = true
+        case 25:
+            currentSleepMode = "Deep Hibernate (Disk only, no RAM)"
+            isHibernating = true
+        default:
+            currentSleepMode = "Unknown mode: \(mode)"
+            isHibernating = false
+        }
+    }
+    
+    // MARK: - Logging Functions
+    
+    func addLogMessage(_ message: String, type: LogMessage.LogType) {
+        let log = LogMessage(timestamp: Date(), message: message, type: type)
+        DispatchQueue.main.async {
+            self.logMessages.append(log)
+        }
+        print("[\(type.rawValue)] \(message)")
+    }
+    
+    // MARK: - Sudo Command Helper
+    
+    func executeSudoCommand(_ command: String, successMessage: String) -> Bool {
+        addLogMessage("Attempting: sudo \(command)", type: .command)
+        addLogMessage("⚠️ Administrator privileges required", type: .warning)
+        
+        // In GUI apps, sudo commands typically fail because they can't prompt for password
+        // Provide clear instructions to the user instead
+        addLogMessage("🔑 This command requires sudo privileges", type: .error)
+        addLogMessage("💡 Please open Terminal and run this command manually:", type: .info)
+        addLogMessage("   sudo \(command)", type: .command)
+        addLogMessage("   (You will be prompted for your password)", type: .info)
+        
+        // Also provide a one-click copy button in the alert
+        alertMessage = "This action requires administrator privileges.\n\nPlease open Terminal and run:\n\nsudo \(command)\n\nThen try again."
+        showAlert = true
+        
+        return false
+    }
+    
+    // MARK: - Command Display Helper
+    
+    @State private var showCommandSheet = false
+    @State private var commandToDisplay = ""
+    
+    func showCommandInstructions(_ command: String) {
+        commandToDisplay = command
+        showCommandSheet = true
+        addLogMessage("📋 Showing command instructions for: \(command)", type: .info)
+    }
+    
+    // MARK: - Non-Sudo Command Helper (for commands that don't need sudo)
+    
+    func executeCommand(_ command: String, successMessage: String) -> Bool {
+        addLogMessage("Executing: \(command)", type: .command)
+        
+        let task = Process()
+        task.launchPath = "/bin/bash"
+        task.arguments = ["-c", command]
+        
+        let pipe = Pipe()
+        task.standardOutput = pipe
+        task.standardError = pipe
+        
+        do {
+            try task.run()
+            task.waitUntilExit()
+            
+            let data = pipe.fileHandleForReading.readDataToEndOfFile()
+            if let output = String(data: data, encoding: .utf8) {
+                if task.terminationStatus != 0 {
+                    addLogMessage("❌ Command failed with status \(task.terminationStatus)", type: .error)
+                    addLogMessage("Output: \(output)", type: .info)
+                    return false
+                }
+                
+                addLogMessage("✅ \(successMessage)", type: .success)
+                addLogMessage("Output: \(output)", type: .info)
+                return true
+            }
+        } catch {
+            addLogMessage("❌ Error executing command: \(error)", type: .error)
+            return false
+        }
+        
+        return false
+    }
+    
+    func clearLogs() {
+        logMessages.removeAll()
+    }
+    
+    func filteredLogs() -> [LogMessage] {
+        if selectedLogFilter == "All" {
+            return logMessages
+        }
+        return logMessages.filter { $0.type.rawValue == selectedLogFilter }
+    }
+}
+
+// Log Message Model
+struct LogMessage: Identifiable {
+    let id = UUID()
+    let timestamp: Date
+    let message: String
+    let type: LogType
+    
+    enum LogType: String {
+        case info = "Info"
+        case success = "Success"
+        case error = "Error"
+        case warning = "Warning"
+        case command = "Command"
+    }
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}

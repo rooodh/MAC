@@ -1,0 +1,253 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 58;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0F5A97A526A84E1E00B8A5E5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F5A97A426A84E1E00B8A5E5 /* ContentView.swift */; };
+		0F5A97A726A84E1E00B8A5E5 /* HibernateApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F5A97A626A84E1E00B8A5E5 /* HibernateApp.swift */; };
+		0F5A97A926A84E1E00B8A5E5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0F5A97A826A84E1E00B8A5E5 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0F5A979F26A84E1E00B8A5E5 /* HibernateApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HibernateApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0F5A97A426A84E1E00B8A5E5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		0F5A97A626A84E1E00B8A5E5 /* HibernateApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HibernateApp.swift; sourceTree = "<group>"; };
+		0F5A97A826A84E1E00B8A5E5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		0F5A97AB26A84E1E00B8A5E5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0F5A979C26A84E1E00B8A5E5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0F5A979D26A84E1E00B8A5E5 = {
+			isa = PBXGroup;
+			children = (
+				0F5A97A626A84E1E00B8A5E5 /* HibernateApp.swift */,
+				0F5A97A426A84E1E00B8A5E5 /* ContentView.swift */,
+				0F5A97A826A84E1E00B8A5E5 /* Assets.xcassets */,
+				0F5A97AB26A84E1E00B8A5E5 /* Info.plist */,
+				0F5A979F26A84E1E00B8A5E5 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		0F5A979F26A84E1E00B8A5E5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0F5A979F26A84E1E00B8A5E5 /* HibernateApp.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0F5A979E26A84E1E00B8A5E5 /* HibernateApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0F5A97B126A84E1E00B8A5E5 /* Build configuration list for PBXNativeTarget "HibernateApp" */;
+			buildPhases = (
+				0F5A979B26A84E1E00B8A5E5 /* Sources */,
+				0F5A979C26A84E1E00B8A5E5 /* Frameworks */,
+				0F5A979D26A84E1E00B8A5E5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HibernateApp;
+			productName = HibernateApp;
+			productReference = 0F5A979F26A84E1E00B8A5E5 /* HibernateApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0F5A97A026A84E1E00B8A5E5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1310;
+				ORGANIZATIONNAME = "";
+				TargetAttributes = {
+					0F5A979E26A84E1E00B8A5E5 = {
+						CreatedOnToolsVersion = 13.1;
+						DevelopmentTeam = "";
+					};
+				};
+			};
+			buildConfigurationList = 0F5A97B426A84E1E00B8A5E5 /* Build configuration list for PBXProject "HibernateApp" */;
+			compatibilityVersion = "Xcode 13.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 0F5A979D26A84E1E00B8A5E5;
+			productRefGroup = 0F5A979F26A84E1E00B8A5E5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0F5A979E26A84E1E00B8A5E5 /* HibernateApp */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0F5A979D26A84E1E00B8A5E5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0F5A97A926A84E1E00B8A5E5 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0F5A979B26A84E1E00B8A5E5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0F5A97A526A84E1E00B8A5E5 /* ContentView.swift in Sources */,
+				0F5A97A726A84E1E00B8A5E5 /* HibernateApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		0F5A97B226A84E1E00B8A5E5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_NS_ASSERTIONS = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		0F5A97B326A84E1E00B8A5E5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		0F5A97B526A84E1E00B8A5E5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.HibernateApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		0F5A97B626A84E1E00B8A5E5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.HibernateApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0F5A97B126A84E1E00B8A5E5 /* Build configuration list for PBXNativeTarget "HibernateApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0F5A97B226A84E1E00B8A5E5 /* Debug */,
+				0F5A97B326A84E1E00B8A5E5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0F5A97B426A84E1E00B8A5E5 /* Build configuration list for PBXProject "HibernateApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0F5A97B526A84E1E00B8A5E5 /* Debug */,
+				0F5A97B626A84E1E00B8A5E5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0F5A97A026A84E1E00B8A5E5 /* Project object */;
+}
